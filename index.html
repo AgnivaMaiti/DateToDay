@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Day of the Week Finder</title>
+  <title>Day of the Week Finder and To-Do List</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -26,32 +26,92 @@
       margin-top: 20px;
       font-size: 18px;
     }
+
+    #todoList {
+      margin-top: 50px;
+      text-align: left;
+    }
+
+    .completed {
+      text-decoration: line-through;
+    }
   </style>
 </head>
 <body>
-  <h1>Day of the Week Finder</h1>
+  <h1>Day of the Week Finder and To-Do List</h1>
   <label for="dateInput">Enter a date:</label>
   <input type="date" id="dateInput">
   <button onclick="findDay()">Find Day</button>
   <div id="output"></div>
 
+  <h2>To-Do List</h2>
+  <input type="text" id="taskInput" placeholder="Add a task">
+  <button onclick="addTask()">Add Task</button>
+  <ul id="todoList"></ul>
+  <button onclick="saveToCSV()">Save to CSV</button>
+
   <script>
+    // To-Do List
+    var tasks = [];
+
+    function addTask() {
+      var taskInput = document.getElementById('taskInput');
+      var task = taskInput.value.trim();
+
+      if (task !== '') {
+        tasks.push({ task: task, completed: false });
+        displayTasks();
+        taskInput.value = '';
+      }
+    }
+
+    function displayTasks() {
+      var todoList = document.getElementById('todoList');
+      todoList.innerHTML = '';
+
+      tasks.forEach(function (item, index) {
+        var listItem = document.createElement('li');
+        listItem.innerHTML = '<input type="checkbox" onclick="toggleTask(' + index + ')" ' +
+          (item.completed ? 'checked' : '') + '> ' +
+          '<span class="' + (item.completed ? 'completed' : '') + '">' + item.task + '</span>' +
+          ' <button onclick="deleteTask(' + index + ')">Delete</button>';
+        todoList.appendChild(listItem);
+      });
+    }
+
+    function toggleTask(index) {
+      tasks[index].completed = !tasks[index].completed;
+      displayTasks();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      displayTasks();
+    }
+
+    // Day of the Week Finder
     function findDay() {
-      // Get the input date value
       var inputDate = document.getElementById('dateInput').value;
-
-      // Convert the input date to a Date object
       var dateObject = new Date(inputDate);
-
-      // Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
       var dayOfWeek = dateObject.getDay();
-
-      // Array of days of the week
       var daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-      // Display the result
       var outputDiv = document.getElementById('output');
       outputDiv.innerHTML = 'The day of the week for ' + inputDate + ' is ' + daysOfWeek[dayOfWeek] + '.';
+    }
+
+    // Save To-Do List to CSV
+    function saveToCSV() {
+      var csvContent = 'data:text/csv;charset=utf-8,';
+      tasks.forEach(function (item) {
+        csvContent += item.task + ',' + item.completed + '\n';
+      });
+
+      var encodedUri = encodeURI(csvContent);
+      var link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', 'todo.csv');
+      document.body.appendChild(link);
+      link.click();
     }
   </script>
 </body>
