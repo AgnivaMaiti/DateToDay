@@ -48,11 +48,32 @@
   <input type="text" id="taskInput" placeholder="Add a task">
   <button onclick="addTask()">Add Task</button>
   <ul id="todoList"></ul>
-  <button onclick="saveToCSV()">Save to CSV</button>
+  <button onclick="saveToLocalStorage()">Save to LocalStorage</button>
+  <button onclick="clearLocalStorage()">Clear LocalStorage</button>
 
   <script>
     // To-Do List
     var tasks = [];
+
+    // Load tasks from localStorage when the page loads
+    window.onload = function () {
+      loadTasks();
+      displayTasks();
+    };
+
+    function loadTasks() {
+      // Retrieve tasks from localStorage
+      var storedTasks = localStorage.getItem('tasks');
+
+      if (storedTasks) {
+        tasks = JSON.parse(storedTasks);
+      }
+    }
+
+    function saveTasks() {
+      // Save tasks to localStorage
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
 
     function addTask() {
       var taskInput = document.getElementById('taskInput');
@@ -62,6 +83,7 @@
         tasks.push({ task: task, completed: false });
         displayTasks();
         taskInput.value = '';
+        saveTasks();
       }
     }
 
@@ -82,11 +104,13 @@
     function toggleTask(index) {
       tasks[index].completed = !tasks[index].completed;
       displayTasks();
+      saveTasks();
     }
 
     function deleteTask(index) {
       tasks.splice(index, 1);
       displayTasks();
+      saveTasks();
     }
 
     // Day of the Week Finder
@@ -100,18 +124,17 @@
     }
 
     // Save To-Do List to CSV
-    function saveToCSV() {
-      var csvContent = 'data:text/csv;charset=utf-8,';
-      tasks.forEach(function (item) {
-        csvContent += item.task + ',' + item.completed + '\n';
-      });
+    function saveToLocalStorage() {
+      saveTasks();
+      alert('To-Do List saved to LocalStorage!');
+    }
 
-      var encodedUri = encodeURI(csvContent);
-      var link = document.createElement('a');
-      link.setAttribute('href', encodedUri);
-      link.setAttribute('download', 'todo.csv');
-      document.body.appendChild(link);
-      link.click();
+    // Clear LocalStorage (for testing purposes)
+    function clearLocalStorage() {
+      localStorage.removeItem('tasks');
+      tasks = [];
+      displayTasks();
+      alert('LocalStorage cleared!');
     }
   </script>
 </body>
