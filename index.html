@@ -52,17 +52,14 @@
   <button onclick="clearLocalStorage()">Clear LocalStorage</button>
 
   <script>
-    // To-Do List
     var tasks = [];
 
-    // Load tasks from localStorage when the page loads
     window.onload = function () {
       loadTasks();
       displayTasks();
     };
 
     function loadTasks() {
-      // Retrieve tasks from localStorage
       var storedTasks = localStorage.getItem('tasks');
 
       if (storedTasks) {
@@ -71,7 +68,6 @@
     }
 
     function saveTasks() {
-      // Save tasks to localStorage
       localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
@@ -113,7 +109,6 @@
       saveTasks();
     }
 
-    // Day of the Week Finder
     function findDay() {
       var inputDate = document.getElementById('dateInput').value;
       var dateObject = new Date(inputDate);
@@ -123,13 +118,11 @@
       outputDiv.innerHTML = 'The day of the week for ' + inputDate + ' is ' + daysOfWeek[dayOfWeek] + '.';
     }
 
-    // Save To-Do List to CSV
     function saveToLocalStorage() {
       saveTasks();
       alert('To-Do List saved to LocalStorage!');
     }
 
-    // Clear LocalStorage (for testing purposes)
     function clearLocalStorage() {
       localStorage.removeItem('tasks');
       tasks = [];
